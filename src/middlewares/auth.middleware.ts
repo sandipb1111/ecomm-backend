@@ -2,6 +2,7 @@
 import * as Boom from "@hapi/boom"
 import { Request, Response, NextFunction } from "express"
 import * as jwt from "jsonwebtoken"
+import { verifyAccessToken } from "../utils/token.utils"
 
 export function authenticateToken(
     req: Request,
@@ -20,7 +21,7 @@ export function authenticateToken(
 
     try {
         // Verify and decode the token
-        const decodedToken = jwt.verify(token, "random-secret-access")
+        const decodedToken = verifyAccessToken(token)
         // Attach the decoded token to the request object
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

@@ -2,7 +2,11 @@
 import * as Boom from "@hapi/boom"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+import {
+    createAccessToken,
+    createRefreshToken,
+    verifyRefreshToken,
+} from "../utils/token.utils"
 const prisma = new PrismaClient()
 
 export const login = async (email: string, password: string) => {
@@ -23,22 +27,10 @@ export const login = async (email: string, password: string) => {
     if (!passwordMatch) {
         throw Boom.unauthorized("Password Does not match")
     }
-    const accessToken = jwt.sign(
-        { userId: user.id, isAdmin: user.isAdmin },
-        "random-secret-access",
-        {
-            expiresIn: "1h",
-        }
-    )
-    const refreshToken = jwt.sign(
-        { userId: user.id, isAdmin: user.isAdmin },
-        "random-secret-refresh",
-        {
-            expiresIn: "1h",
-        }
-    )
-    console.log(refreshToken)
-    return { success: true, accessToken }
+    const accessToken = createAccessToken(user.id, user.isAdmin)
+
+    const refreshToken = createRefreshToken(user.id, user.isAdmin)
+    return { accessToken, refreshToken }
 }
 
 export const register = async (user: any) => {
@@ -66,5 +58,14 @@ export const register = async (user: any) => {
         } else {
             throw err
         }
+    }
+}
+
+export const refreshToken = async (refreshToken: any) => {
+    try {
+        const decodedToken = verifyRefreshToken(refreshToken)
+        console.log(decodedToken)
+    } catch (err) {
+        throw Boom.unauthorized("User is not logged in")
     }
 }
