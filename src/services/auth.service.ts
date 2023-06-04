@@ -2,7 +2,6 @@
 import * as Boom from "@hapi/boom"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcryptjs"
-import * as crypto from "crypto"
 import jwt from "jsonwebtoken"
 const prisma = new PrismaClient()
 
@@ -24,8 +23,48 @@ export const login = async (email: string, password: string) => {
     if (!passwordMatch) {
         throw Boom.unauthorized("Password Does not match")
     }
-    const token = jwt.sign({ userId: user.id }, "random-secret", {
-        expiresIn: "1h",
-    })
-    return { success: true, token }
+    const accessToken = jwt.sign(
+        { userId: user.id, isAdmin: user.isAdmin },
+        "random-secret-access",
+        {
+            expiresIn: "1h",
+        }
+    )
+    const refreshToken = jwt.sign(
+        { userId: user.id, isAdmin: user.isAdmin },
+        "random-secret-refresh",
+        {
+            expiresIn: "1h",
+        }
+    )
+    console.log(refreshToken)
+    return { success: true, accessToken }
+}
+
+export const register = async (user: any) => {
+    try {
+        const { email, password } = user
+        const users = await prisma.user.create({
+            data: {
+                email,
+                password: await bcrypt.hash(password as string, 10),
+            },
+            select: {
+                email: true,
+                addresses: true,
+                phone_number: true,
+                id: true,
+            },
+        })
+        return users
+    } catch (err: any) {
+        if (err.code === "P2025") {
+            throw Boom.badRequest("Email already exist")
+        }
+        if (err.code === "P2002") {
+            throw Boom.badRequest("Email already exist")
+        } else {
+            throw err
+        }
+    }
 }

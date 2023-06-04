@@ -1,22 +1,167 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native","windows","linux-musl"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows","linux-musl"]
 }
 
 datasource db {
-  provider = "mysql"
-    relationMode = "prisma"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+
+  url = env("DATABASE_URL")
 }
 
+model Product {
+  id            Int             @id @default(autoincrement())
+  category      ProductCategory @relation(fields: [category_id], references: [id])
+  category_id   Int
+  name          String
+  description   String?
+  product_image String
+  product_items ProductItem[]
+}
 
-model User{
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  address String
-  password String
+model ProductItem {
+  id                  Int                    @id @default(autoincrement())
+  product             Product                @relation(fields: [product_id], references: [id])
+  product_id          Int
+  SKU                 String
+  quantity_in_stock   Int
+  product_image       String
+  price               Float
+  configurations      ProductConfiguration[]
+  order_lines         OrderLine[]
+  shopping_cart_items ShoppingCartItem[]
+  UserReview          UserReview[]
+}
+
+model ProductCategory {
+  id                 Int               @id @default(autoincrement())
+  parent_category    ProductCategory?  @relation("ChildCategories", fields: [parent_category_id], references: [id])
+  parent_category_id Int?
+  category_name      String
+  products           Product[]
+  children           ProductCategory[] @relation("ChildCategories")
+  Variation          Variation[]
+}
+
+model Variation {
+  id          Int               @id @default(autoincrement())
+  category    ProductCategory   @relation(fields: [category_id], references: [id])
+  category_id Int
+  name        String
+  options     VariationOption[]
+}
+
+model VariationOption {
+  id             Int                    @id @default(autoincrement())
+  variation      Variation              @relation(fields: [variation_id], references: [id])
+  variation_id   Int
+  value          String
+  configurations ProductConfiguration[]
+}
+
+model ProductConfiguration {
+  product_item        ProductItem     @relation(fields: [product_item_id], references: [id])
+  product_item_id     Int
+  variation_option    VariationOption @relation(fields: [variation_option_id], references: [id])
+  variation_option_id Int
+
+  @@id([product_item_id, variation_option_id])
+}
+
+model ShopOrder {
+  id                  Int            @id @default(autoincrement())
+  user                User           @relation(fields: [user_id], references: [id])
+  user_id             Int
+  order_date          DateTime
+  shipping_address    Address        @relation(fields: [shipping_address_id], references: [id])
+  shipping_address_id Int
+  shipping_method     ShippingMethod @relation(fields: [shipping_method_id], references: [id])
+  shipping_method_id  Int
+  order_total         Float
+  order_status        OrderStatus    @relation(fields: [order_status_id], references: [id])
+  order_status_id     Int
+  order_lines         OrderLine[]
+}
+
+model ShippingMethod {
+  id          Int         @id @default(autoincrement())
+  name        String
+  price       Float
+  shop_orders ShopOrder[]
+}
+
+model OrderStatus {
+  id         Int         @id @default(autoincrement())
+  status     String
+  shop_order ShopOrder[]
+}
+
+model OrderLine {
+  id              Int         @id @default(autoincrement())
+  product_item    ProductItem @relation(fields: [product_item_id], references: [id])
+  product_item_id Int
+  shop_order      ShopOrder   @relation(fields: [shop_order_id], references: [id])
+  shop_order_id   Int
+  quantity        Int
+  price           Float
+}
+
+model ShoppingCart {
+  id                  Int                @id @default(autoincrement())
+  user                User               @relation(fields: [user_id], references: [id])
+  user_id             Int
+  shopping_cart_items ShoppingCartItem[]
+}
+
+model ShoppingCartItem {
+  id               Int          @id @default(autoincrement())
+  shopping_cart    ShoppingCart @relation(fields: [shopping_cart_id], references: [id])
+  shopping_cart_id Int
+  product_item     ProductItem  @relation(fields: [product_item_id], references: [id])
+  product_item_id  Int
+  quantity         Int
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  phone_number String?
+  password     String
+  isAdmin     Boolean        @default(false)
+  orders       ShopOrder[]
+  addresses    UserAddress[]
+  reviews      UserReview[]
+  ShoppingCart ShoppingCart[]
+}
+
+model UserAddress {
+  user       User    @relation(fields: [user_id], references: [id])
+  user_id    Int
+  address    Address @relation(fields: [address_id], references: [id])
+  address_id Int
+  is_default Boolean
+
+  @@id([user_id, address_id])
+}
+
+model Address {
+  id             Int           @id @default(autoincrement())
+  street_number  String
+  address_line1  String
+  address_line2  String?
+  city           String
+  region         String
+  postal_code    String
+  user_addresses UserAddress[]
+  ShopOrder      ShopOrder[]
+}
+
+model UserReview {
+  id                 Int         @id @default(autoincrement())
+  user               User        @relation(fields: [user_id], references: [id])
+  user_id            Int
+  ordered_product    ProductItem @relation(fields: [ordered_product_id], references: [id])
+  ordered_product_id Int
+  rating_value       Int
+  comment            String
 }

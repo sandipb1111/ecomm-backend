@@ -1,0 +1,14 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Ecommerce",
+            "Group": "Ecommerce",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "react_node_shop_db",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres",
+            "PassFile": "/pgadmin4/pgpass.json"
+        }
+    }
+}

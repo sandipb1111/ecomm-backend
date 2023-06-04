@@ -1,34 +1,43 @@
 version: "3"
 
 services:
-    express_starter_db:
-        image: mysql
-        command: --default-authentication-plugin=mysql_native_password
-        ports:
-            - "3308:3306"
+    react_node_shop_db:
+        image: postgres:14.5-alpine
+        restart: always
         environment:
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: express_starters
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - "5432:5432"
         volumes:
-            - express_starter_db:/var/lib/mysql
+            - react_node_shop_db:/var/lib/postgresql/data
 
-    express_starter_test_db:
-        image: mysql
-        command: --default-authentication-plugin=mysql_native_password
-        ports:
-            - "3307:3306"
+    react_node_shop_test_db:
+        image: postgres:14.5-alpine
+        restart: always
         environment:
-            MYSQL_ROOT_PASSWORD: password
-            MYSQL_DATABASE: express_starter_test
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - "5434:5432"
         volumes:
-            - express_starter_test_db:/var/lib/mysql
+            - react_node_shop_test_db:/var/lib/postgresql/data
+
+    padmin_widgets:
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+        volumes:
+            - ./docker-compose-presets/servers.json:/pgadmin4/servers.json
+            - ./docker-compose-presets/pgpass.conf:/pgadmin4/pgpass.json
+        image: dpage/pgadmin4:6.18
+        ports:
+            - 5000:80
+        depends_on:
+            - react_node_shop_db
 
 volumes:
-    express_starter_db:
+    react_node_shop_db:
         driver: local
-    express_starter_test_db:
+    react_node_shop_test_db:
         driver: local
