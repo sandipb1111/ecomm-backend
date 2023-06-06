@@ -121,6 +121,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "phone_number" TEXT,
     "password" TEXT NOT NULL,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

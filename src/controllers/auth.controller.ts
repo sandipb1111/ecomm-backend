@@ -12,6 +12,7 @@ export const userLogin = async (
             email,
             password
         )
+
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             path: "/api/auth/refresh",

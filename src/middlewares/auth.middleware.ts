@@ -25,6 +25,7 @@ export function authenticateToken(
         // Attach the decoded token to the request object
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+
         req.user = decodedToken
 
         next() // Proceed to the next middleware or route handler

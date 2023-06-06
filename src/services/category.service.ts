@@ -4,16 +4,13 @@ const prisma = new PrismaClient()
 
 export const getProduct = async (id: number) => {
     try {
-        return await prisma.product.findFirstOrThrow({
+        return await prisma.productCategory.findFirstOrThrow({
             where: {
                 id,
             },
             select: {
                 id: true,
-                category_id: false,
-                name: true,
-                product_image: true,
-                description: true,
+                category_name: false,
             },
         })
     } catch (err: any) {
@@ -27,13 +24,11 @@ export const getProduct = async (id: number) => {
 
 export const getAll = async () => {
     try {
-        const product = await prisma.product.findMany({
+        console.log("This is get all")
+        const product = await prisma.productCategory.findMany({
             select: {
                 id: true,
-                category_id: false,
-                name: true,
-                product_image: true,
-                description: true,
+                category_name: true,
             },
         })
         return product
@@ -44,24 +39,18 @@ export const getAll = async () => {
     }
 }
 
-export const setProduct = async (product: Product) => {
+export const setProduct = async (product: any) => {
     // eslint-disable-next-line no-useless-catch
     try {
-        const { name, description, product_image, category_id } = product
-        const products = await prisma.product.create({
+        const { id, category_name } = product
+        const products = await prisma.productCategory.create({
             data: {
                 id: Math.ceil(Math.random() * 1000),
-                name,
-                description,
-                product_image,
-                category_id,
+                category_name,
             },
             select: {
                 id: true,
-                category_id: false,
-                name: true,
-                product_image: true,
-                description: true,
+                category_name: true,
             },
         })
         return products
@@ -73,15 +62,12 @@ export const setProduct = async (product: Product) => {
 export const updateProduct = async (id: number, product: Product) => {
     try {
         const { name, description, product_image, category_id } = product
-        const products = await prisma.product.update({
+        const products = await prisma.productCategory.update({
             where: {
                 id,
             },
             data: {
-                name,
-                category_id,
-                description,
-                product_image,
+                id,
             },
         })
         return products

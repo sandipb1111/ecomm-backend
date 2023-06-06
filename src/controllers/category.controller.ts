@@ -1,53 +1,54 @@
 import { Request, Response, NextFunction } from "express"
 import { StatusCodes } from "http-status-codes"
-import * as productService from "../services/product.service"
+import * as categoryService from "../services/category.service"
 
-export const getProductById = async (
+export const getCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const data = await productService.getProduct(parseInt(req.params.id))
+        const data = await categoryService.getProduct(parseInt(req.params.id))
         res.send(data).status(StatusCodes.OK)
     } catch (err) {
         next(err)
     }
 }
 
-export const getAllProducts = async (
+export const getAllCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const data = await productService.getAll()
+        const data = await categoryService.getAll()
+        console.log(data)
         res.json(data)
     } catch (err) {
         next(err)
     }
 }
 
-export const postProduct = async (
+export const postCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const data = await productService.setProduct(req.body)
+        const data = await categoryService.setProduct(req.body)
         res.send(data).sendStatus(StatusCodes.CREATED)
     } catch (err) {
         next(err)
     }
 }
 
-export const updateProduct = async (
+export const updateCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const data = await productService.updateProduct(
+        const data = await categoryService.updateProduct(
             parseInt(req.params.id),
             req.body
         )
@@ -57,13 +58,13 @@ export const updateProduct = async (
     }
 }
 
-export const deleteProduct = async (
+export const deleteCategory = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        await productService.deleteProduct(parseInt(req.params.id))
+        await categoryService.deleteProduct(parseInt(req.params.id))
         res.sendStatus(StatusCodes.OK)
     } catch (err) {
         next(err)
