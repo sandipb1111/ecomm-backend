@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PrismaClient } from "@prisma/client"
+/*import { PrismaClient } from "@prisma/client"
 import { z } from "zod"
 import { updateProfileBodySchema } from "../valdator/profile.validate"
 const prisma = new PrismaClient()
@@ -25,3 +25,4 @@ export const updateProfile = async (
         },
     })
 }
+*/
