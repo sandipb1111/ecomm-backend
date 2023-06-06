@@ -1,9 +1,10 @@
-/*import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction } from "express"
 import { StatusCodes } from "http-status-codes"
 import * as profileService from "../services/profile.service"
+import { RequestWithUserObject } from "../types"
 
 export const getProfile = async (
-    req: Request,
+    req: RequestWithUserObject,
     res: Response,
     next: NextFunction
 ) => {
@@ -16,7 +17,7 @@ export const getProfile = async (
 }
 
 export const updateProfile = async (
-    req: Request,
+    req: RequestWithUserObject,
     res: Response,
     next: NextFunction
 ) => {
@@ -30,4 +31,3 @@ export const updateProfile = async (
         next(err)
     }
 }
-*/

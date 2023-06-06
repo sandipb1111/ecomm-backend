@@ -1,5 +1,5 @@
 import * as Boom from "@hapi/boom"
-import { PrismaClient, Product } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const getProduct = async (id: number) => {
@@ -42,7 +42,7 @@ export const getAll = async () => {
 export const setProduct = async (product: any) => {
     // eslint-disable-next-line no-useless-catch
     try {
-        const { id, category_name } = product
+        const { category_name } = product
         const products = await prisma.productCategory.create({
             data: {
                 id: Math.ceil(Math.random() * 1000),
@@ -59,15 +59,15 @@ export const setProduct = async (product: any) => {
     }
 }
 
-export const updateProduct = async (id: number, product: Product) => {
+export const updateProduct = async (id: number, product: any) => {
     try {
-        const { name, description, product_image, category_id } = product
+        const { category_name } = product
         const products = await prisma.productCategory.update({
             where: {
                 id,
             },
             data: {
-                id,
+                category_name,
             },
         })
         return products
