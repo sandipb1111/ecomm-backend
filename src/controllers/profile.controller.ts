@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express"
+/*import { Request, Response, NextFunction } from "express"
 import { StatusCodes } from "http-status-codes"
 import * as profileService from "../services/profile.service"
 
@@ -30,3 +30,4 @@ export const updateProfile = async (
         next(err)
     }
 }
+*/
